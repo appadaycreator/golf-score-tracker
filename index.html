@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ゴルフスコア管理・分析アプリ｜無料でラウンド記録・統計分析</title>
+    <meta name="description" content="ゴルフのスコアを無料で記録・管理・分析。ラウンドごとの成績、平均スコア、ベストスコア、推移グラフを自動集計。ハンデキャップ計算も対応。データはスマホに保存。">
+    <meta name="keywords" content="ゴルフ,スコア管理,スコア記録,アプリ,無料,ラウンド,ハンデキャップ,分析,統計">
+    <link rel="canonical" href="https://appadaycreator.github.io/golf-score-tracker/">
+    <meta property="og:title" content="ゴルフスコア管理・分析アプリ｜無料でラウンド記録・統計分析">
+    <meta property="og:description" content="ゴルフのスコアを無料で記録・管理・分析。平均スコア・ベストスコア・推移グラフを自動集計。ハンデキャップ計算対応。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://appadaycreator.github.io/golf-score-tracker/">
+    <meta property="og:image" content="https://appadaycreator.github.io/assets/ogp-default.png">
+    <meta property="og:site_name" content="ゴルフスコア管理・分析アプリ">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ゴルフスコア管理・分析アプリ｜無料でラウンド記録">
+    <meta name="twitter:description" content="ラウンド記録・スコア分析・ハンデ計算を無料でまとめて管理。">
+    <meta name="twitter:image" content="https://appadaycreator.github.io/assets/ogp-default.png">
+    <!-- GTM -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-TXQGZRF9');</script>
+    <!-- Clarity -->
+    <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","s3t9vl8h3v");</script>
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8427583028015858" crossorigin="anonymous"></script>
+    <!-- Schema -->
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebApplication","name":"ゴルフスコア管理・分析アプリ","url":"https://appadaycreator.github.io/golf-score-tracker/","description":"ゴルフのスコアを無料で記録・管理・分析するWebアプリ。ラウンドごとの成績、平均スコア、推移グラフを自動集計。","applicationCategory":"SportsApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"}}
+    </script>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"ゴルフスコア管理アプリは無料ですか？","acceptedAnswer":{"@type":"Answer","text":"完全無料です。アカウント登録不要で、データはお使いのスマートフォン・PCに保存されます。"}},
+      {"@type":"Question","name":"ハンデキャップはどう計算しますか？","acceptedAnswer":{"@type":"Answer","text":"JGA（日本ゴルフ協会）方式に基づき、直近20ラウンドのベスト8スコアの差分から算出します。コースレーティングとスロープレーティングを考慮した簡易計算に対応しています。"}},
+      {"@type":"Question","name":"データはどこに保存されますか？","acceptedAnswer":{"@type":"Answer","text":"データはブラウザのLocalStorageに保存されます。サーバーに送信されないため、プライバシーが守られます。ブラウザのデータ削除で消えるため、定期的にエクスポートをお勧めします。"}},
+      {"@type":"Question","name":"ゴルフスコアの平均はどのくらいですか？","acceptedAnswer":{"@type":"Answer","text":"日本のアマチュアゴルファーの平均スコアは18ホールで100〜110が最多層です。80台は上級者、90台は中級者、100以上は初級〜中級者の目安です。"}}
+    ]}
+    </script>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{font-family:'Hiragino Sans','Meiryo',sans-serif;background:#f0fdf4;color:#1e293b;line-height:1.6;}
+        /* Header */
+        .header{background:linear-gradient(135deg,#166534 0%,#15803d 60%,#16a34a 100%);color:#fff;padding:20px 16px 0;text-align:center;}
+        .header h1{font-size:clamp(1.2rem,4vw,1.6rem);font-weight:800;margin-bottom:6px;}
+        .header p{font-size:0.82rem;opacity:0.9;margin-bottom:16px;}
+        /* Tabs */
+        .tabs{display:flex;background:rgba(0,0,0,0.2);border-radius:12px 12px 0 0;overflow:hidden;max-width:480px;margin:0 auto;}
+        .tab{flex:1;padding:12px 4px;font-size:0.82em;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer;border:none;background:none;transition:all .2s;}
+        .tab.active{background:#fff;color:#166534;border-radius:8px 8px 0 0;}
+        /* Main */
+        .main{max-width:480px;margin:0 auto;padding:0 12px 60px;}
+        .panel{display:none;padding-top:16px;}
+        .panel.active{display:block;}
+        /* Cards */
+        .card{background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.07);padding:18px;margin-bottom:14px;}
+        .card-title{font-size:0.9rem;font-weight:700;color:#166534;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+        /* Stats */
+        .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+        .stat-box{background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:12px 8px;text-align:center;}
+        .stat-val{font-size:1.5rem;font-weight:800;color:#166534;}
+        .stat-lbl{font-size:0.7rem;color:#64748b;margin-top:2px;}
+        /* Form */
+        label{display:block;font-size:0.8rem;font-weight:600;color:#475569;margin-bottom:4px;margin-top:10px;}
+        input,select,textarea{width:100%;padding:10px 12px;border:1px solid #d1fae5;border-radius:9px;font-size:0.88em;background:#f8fff8;color:#1e293b;outline:none;transition:border .2s;}
+        input:focus,select:focus,textarea:focus{border-color:#16a34a;background:#fff;}
+        input[type="number"]{-moz-appearance:textfield;}
+        .btn-primary{width:100%;background:linear-gradient(135deg,#166534,#16a34a);color:#fff;border:none;border-radius:10px;padding:13px;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:14px;}
+        .btn-primary:hover{opacity:0.92;}
+        .btn-danger{background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:6px 12px;font-size:0.78em;cursor:pointer;font-weight:600;}
+        /* Holes grid */
+        .holes-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;}
+        .hole-box{text-align:center;}
+        .hole-num{font-size:0.62em;color:#94a3b8;font-weight:600;}
+        .hole-par{font-size:0.62em;color:#64748b;}
+        .hole-input{width:100%;padding:6px 2px;text-align:center;border:1px solid #d1fae5;border-radius:6px;font-size:0.85em;font-weight:700;}
+        /* Score colors */
+        .eagle{background:#fef08a!important;color:#854d0e!important;}
+        .birdie{background:#bbf7d0!important;color:#166534!important;}
+        .par-score{background:#fff!important;}
+        .bogey{background:#fed7aa!important;color:#9a3412!important;}
+        .double{background:#fecaca!important;color:#991b1b!important;}
+        .triple{background:#f87171!important;color:#fff!important;}
+        /* History */
+        .round-item{border:1px solid #d1fae5;border-radius:10px;padding:12px;margin-bottom:10px;background:#f8fff8;}
+        .round-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+        .round-score{font-size:1.4rem;font-weight:800;color:#166534;}
+        .round-date{font-size:0.78em;color:#64748b;}
+        .round-meta{font-size:0.78em;color:#475569;}
+        .score-pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:0.72em;font-weight:700;}
+        .pill-good{background:#bbf7d0;color:#166534;}
+        .pill-bad{background:#fecaca;color:#991b1b;}
+        .pill-normal{background:#e2e8f0;color:#475569;}
+        /* Chart */
+        .chart-wrap{overflow-x:auto;padding-bottom:8px;}
+        .bar-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px;}
+        .bar-col{display:flex;flex-direction:column;align-items:center;min-width:30px;}
+        .bar{width:24px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#16a34a,#166534);position:relative;cursor:pointer;}
+        .bar:hover{opacity:0.8;}
+        .bar-val{font-size:0.65em;color:#475569;margin-top:3px;font-weight:600;}
+        .bar-date{font-size:0.58em;color:#94a3b8;transform:rotate(-45deg);transform-origin:top left;width:28px;margin-top:6px;}
+        /* Section divider */
+        .divider{height:1px;background:#d1fae5;margin:14px 0;}
+        /* Handicap */
+        .hcp-box{background:linear-gradient(135deg,#166534,#15803d);color:#fff;border-radius:12px;padding:18px;text-align:center;}
+        .hcp-val{font-size:2.5rem;font-weight:800;}
+        .hcp-lbl{font-size:0.82em;opacity:0.85;}
+        /* Tips */
+        .tip-item{font-size:0.82em;color:#475569;padding:8px 0;border-bottom:1px solid #f1f5f9;display:flex;gap:8px;}
+        .tip-item:last-child{border:none;}
+        /* Related */
+        .related-link{display:block;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:12px;text-decoration:none;color:#166534;font-size:0.85em;font-weight:600;margin-bottom:8px;}
+        /* Amazon */
+        .amz-btn{display:inline-block;background:#ff9900;color:#fff;padding:10px 20px;border-radius:8px;font-size:0.85em;font-weight:700;text-decoration:none;margin-top:8px;}
+    </style>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TXQGZRF9" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="header">
+    <h1>⛳ ゴルフスコア管理・分析</h1>
+    <p>ラウンド記録 → 統計分析 → ハンデ計算を無料で一括管理</p>
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('record')">📝 記録</button>
+        <button class="tab" onclick="switchTab('history')">📋 履歴</button>
+        <button class="tab" onclick="switchTab('analysis')">📊 分析</button>
+        <button class="tab" onclick="switchTab('tips')">💡 上達</button>
+    </div>
+</div>
+
+<div class="main">
+
+<!-- ===== 記録タブ ===== -->
+<div id="panel-record" class="panel active">
+    <!-- サマリー -->
+    <div class="stats-grid" id="quick-stats"></div>
+
+    <!-- 入力フォーム -->
+    <div class="card">
+        <div class="card-title">⛳ ラウンド記録を追加</div>
+        <label>📅 ラウンド日</label>
+        <input type="date" id="inp-date" required>
+        <label>🏌️ コース名</label>
+        <input type="text" id="inp-course" placeholder="例：〇〇カントリークラブ" required maxlength="60">
+        <label>🎯 コースタイプ</label>
+        <select id="inp-type">
+            <option value="18H">18ホール（通常）</option>
+            <option value="9H">9ホール</option>
+        </select>
+        <!-- ホール別入力 -->
+        <div style="margin-top:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-size:0.82em;font-weight:600;color:#475569;">🕳️ ホール別スコア（スコアをタップして入力）</span>
+                <label style="display:flex;align-items:center;gap:4px;font-size:0.75em;font-weight:600;margin:0;">
+                    <input type="checkbox" id="simple-mode" onchange="toggleMode()" style="width:auto;"> 合計のみ
+                </label>
+            </div>
+            <div id="hole-inputs-wrap">
+                <div style="margin-bottom:8px;font-size:0.75em;font-weight:700;color:#475569;display:grid;grid-template-columns:repeat(9,1fr);text-align:center;gap:4px;">
+                    <span>OUT</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="holes-grid" id="holes-out"></div>
+                <div style="margin-top:10px;margin-bottom:8px;font-size:0.75em;font-weight:700;color:#475569;display:grid;grid-template-columns:repeat(9,1fr);text-align:center;gap:4px;">
+                    <span>IN</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="holes-grid" id="holes-in"></div>
+                <div id="hole-totals" style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;font-size:0.82em;font-weight:700;color:#166534;"></div>
+            </div>
+            <div id="simple-input-wrap" style="display:none;">
+                <label>トータルスコア</label>
+                <input type="number" id="inp-simple-score" placeholder="例：95" min="40" max="200" required>
+            </div>
+        </div>
+        <label>💨 天気</label>
+        <select id="inp-weather">
+            <option value="晴れ">☀️ 晴れ</option>
+            <option value="曇り">☁️ 曇り</option>
+            <option value="雨">🌧️ 雨</option>
+            <option value="風強">💨 風が強い</option>
+        </select>
+        <label>📝 メモ（気づき・反省点など）</label>
+        <textarea id="inp-memo" rows="2" placeholder="例：アプローチが安定した。3番ホールのバンカーで崩れた。" maxlength="300"></textarea>
+        <label>🏌️ 同伴者（任意）</label>
+        <input type="text" id="inp-partner" placeholder="例：山田さん、佐藤さん" maxlength="60">
+        <button class="btn-primary" onclick="saveRound()">💾 このラウンドを記録する</button>
+    </div>
+
+    <!-- Amazon -->
+    <div class="card" style="text-align:center;">
+        <div class="card-title" style="justify-content:center;">🛒 ゴルフ用品をAmazonで探す</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+            <a href="https://www.amazon.co.jp/s?k=ゴルフボール&tag=appadaycrea0f-22" target="_blank" rel="noopener noreferrer" class="js-track-affiliate amz-btn" data-platform="Amazon" data-item-name="ゴルフボール" data-link-type="affiliate_link">⛳ ボール</a>
+            <a href="https://www.amazon.co.jp/s?k=ゴルフグローブ&tag=appadaycrea0f-22" target="_blank" rel="noopener noreferrer" class="js-track-affiliate amz-btn" data-platform="Amazon" data-item-name="ゴルフグローブ" data-link-type="affiliate_link">🧤 グローブ</a>
+            <a href="https://www.amazon.co.jp/s?k=ゴルフ練習器具+スイング&tag=appadaycrea0f-22" target="_blank" rel="noopener noreferrer" class="js-track-affiliate amz-btn" data-platform="Amazon" data-item-name="ゴルフ練習器具" data-link-type="affiliate_link">🏌️ 練習器具</a>
+            <a href="https://www.amazon.co.jp/s?k=ゴルフ上達+本+スコア&tag=appadaycrea0f-22" target="_blank" rel="noopener noreferrer" class="js-track-affiliate amz-btn" data-platform="Amazon" data-item-name="ゴルフ上達本" data-link-type="affiliate_link">📚 上達本</a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 履歴タブ ===== -->
+<div id="panel-history" class="panel">
+    <div class="card">
+        <div class="card-title">📋 ラウンド履歴</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <select id="filter-type" onchange="renderHistory()" style="flex:1;">
+                <option value="all">すべて</option>
+                <option value="18H">18ホールのみ</option>
+                <option value="9H">9ホールのみ</option>
+            </select>
+            <select id="sort-order" onchange="renderHistory()" style="flex:1;">
+                <option value="date-desc">日付 新→旧</option>
+                <option value="date-asc">日付 旧→新</option>
+                <option value="score-asc">スコア 良→悪</option>
+                <option value="score-desc">スコア 悪→良</option>
+            </select>
+        </div>
+        <div id="history-list"></div>
+        <div id="history-empty" style="text-align:center;color:#94a3b8;padding:30px;font-size:0.88em;">ラウンド記録がまだありません。記録タブから入力してください。</div>
+    </div>
+    <div class="card" style="text-align:center;">
+        <div class="card-title" style="justify-content:center;">📤 データ管理</div>
+        <button onclick="exportData()" style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 20px;font-size:0.85em;font-weight:600;cursor:pointer;color:#166534;margin:4px;">⬇️ CSVエクスポート</button>
+        <button onclick="clearAllData()" style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:10px 20px;font-size:0.85em;font-weight:600;cursor:pointer;color:#dc2626;margin:4px;">🗑️ 全データ削除</button>
+    </div>
+</div>
+
+<!-- ===== 分析タブ ===== -->
+<div id="panel-analysis" class="panel">
+    <div id="analysis-empty" style="display:none;" class="card">
+        <p style="text-align:center;color:#94a3b8;padding:20px;">ラウンドを3回以上記録すると分析が表示されます。</p>
+    </div>
+    <!-- ハンデキャップ -->
+    <div class="card" id="hcp-card">
+        <div class="card-title">🏆 ハンデキャップ（簡易計算）</div>
+        <div class="hcp-box">
+            <div class="hcp-lbl">推定ハンデキャップ</div>
+            <div class="hcp-val" id="hcp-val">--</div>
+            <div class="hcp-lbl" id="hcp-desc">ラウンドを記録すると算出されます</div>
+        </div>
+        <p style="font-size:0.72em;color:#94a3b8;margin-top:8px;">※直近20ラウンドのベスト8スコアから算出（簡易計算）。公式ハンデはJGAへ申請ください。</p>
+    </div>
+    <!-- スコア推移グラフ -->
+    <div class="card">
+        <div class="card-title">📈 スコア推移（最新20ラウンド）</div>
+        <div class="chart-wrap"><div class="bar-chart" id="score-chart"></div></div>
+        <div style="display:flex;gap:12px;margin-top:8px;font-size:0.72em;justify-content:center;">
+            <span>🟢 パー以下</span><span>🟡 +1〜9</span><span>🔴 +10以上</span>
+        </div>
+    </div>
+    <!-- 詳細統計 -->
+    <div class="card">
+        <div class="card-title">📊 詳細統計</div>
+        <div id="detail-stats"></div>
+    </div>
+    <!-- ホール別分析 -->
+    <div class="card" id="hole-analysis-card">
+        <div class="card-title">🕳️ ホール別平均（18H記録から算出）</div>
+        <div id="hole-analysis"></div>
+    </div>
+    <!-- アイアン診断へ -->
+    <div class="card">
+        <div class="card-title" style="justify-content:center;">🏌️ スコアアップのために</div>
+        <a href="https://appadaycreator.github.io/golf-iron-advisor/" class="related-link">
+            🎯 ゴルフアイアン適性診断 → 自分に合ったクラブを選ぼう
+        </a>
+        <a href="https://www.amazon.co.jp/s?k=ゴルフ+スコアアップ+アプローチ&tag=appadaycrea0f-22" target="_blank" rel="noopener noreferrer" class="js-track-affiliate related-link" data-platform="Amazon" data-item-name="ゴルフスコアアップ本" data-link-type="affiliate_link">
+            📚 スコアアップの参考書をAmazonで見る →
+        </a>
+    </div>
+</div>
+
+<!-- ===== 上達Tipsタブ ===== -->
+<div id="panel-tips" class="panel">
+    <div class="card">
+        <div class="card-title">🎯 スコアを10打縮める実践Tips</div>
+        <div class="tip-item"><span>🏌️</span><div><strong>ドライバーより正確性</strong>スコアの90%はショートゲーム（100yd以内）で決まります。飛距離より方向性を優先しましょう。</div></div>
+        <div class="tip-item"><span>🎯</span><div><strong>パーオンより３打目</strong>パーオン率よりも、グリーン近くにボールを運ぶ"寄せワン狙い"がアマチュアには効果的です。</div></div>
+        <div class="tip-item"><span>⛳</span><div><strong>パット数を減らす</strong>スリーパットを減らすだけで5〜10打改善。1.5m以内は確実に入れる練習を優先しましょう。</div></div>
+        <div class="tip-item"><span>🧠</span><div><strong>コースマネジメント</strong>難しいショットより安全なルートを選ぶだけで3〜5打改善できます。リスク管理が重要です。</div></div>
+        <div class="tip-item"><span>📝</span><div><strong>毎回記録して改善</strong>スコアを記録すると苦手なホール・状況が見えてきます。データに基づいた練習が上達の近道です。</div></div>
+        <div class="tip-item"><span>🏋️</span><div><strong>体幹トレーニング</strong>スイングの安定には体幹が重要。週3回のコアトレで飛距離・方向性ともに改善します。</div></div>
+    </div>
+    <div class="card">
+        <div class="card-title">📊 スコア帯別 改善ポイント</div>
+        <div id="score-advice"></div>
+    </div>
+    <div class="card">
+        <div class="card-title">❓ よくある質問</div>
+        <details style="margin-bottom:10px;"><summary style="cursor:pointer;font-size:0.88em;font-weight:600;padding:4px 0;">ハンデキャップの計算方法は？</summary><p style="font-size:0.8em;color:#475569;padding:8px 0 0 12px;">直近20ラウンドのうちベスト8スコアの平均から、基準スコア（通常72）との差を計算します。コースレーティング・スロープレーティングを加味した正式な計算はJGAへお問い合わせください。</p></details>
+        <details style="margin-bottom:10px;"><summary style="cursor:pointer;font-size:0.88em;font-weight:600;padding:4px 0;">データが消えることはありますか？</summary><p style="font-size:0.8em;color:#475569;padding:8px 0 0 12px;">ブラウザのキャッシュクリアや機種変更でデータが失われることがあります。定期的に「CSVエクスポート」でバックアップをとることをお勧めします。</p></details>
+        <details><summary style="cursor:pointer;font-size:0.88em;font-weight:600;padding:4px 0;">スコアの色分けの意味は？</summary><p style="font-size:0.8em;color:#475569;padding:8px 0 0 12px;">イーグル以下=黄、バーディー=緑、パー=白、ボギー=オレンジ、ダブルボギー=薄赤、トリプル以上=赤で表示されます。</p></details>
+    </div>
+    <div class="card" style="text-align:center;">
+        <div class="card-title" style="justify-content:center;">🛒 ゴルフ上達グッズ</div>
+        <a href="https://www.amazon.co.jp/s?k=ゴルフ練習+パター+マット&tag=appadaycrea0f-22" target="_blank" rel="noopener noreferrer" class="js-track-affiliate amz-btn" data-platform="Amazon" data-item-name="パター練習マット" data-link-type="affiliate_link">🎯 パター練習マット</a>
+        <a href="https://www.amazon.co.jp/s?k=ゴルフ+スイング練習器具+室内&tag=appadaycrea0f-22" target="_blank" rel="noopener noreferrer" class="js-track-affiliate amz-btn" data-platform="Amazon" data-item-name="室内スイング練習" data-link-type="affiliate_link" style="margin-left:8px;">🏌️ 室内スイング練習</a>
+        <a href="https://px.a8.net/svt/ejp?a8mat=4AVCO8+8PRLZE+4WGS+BWVTE" rel="nofollow" target="_blank" class="js-track-affiliate" data-platform="A8.net" data-item-name="スポーツ家庭教師ファースト" data-link-type="affiliate_link" style="display:block;margin-top:10px;background:#15803d;color:#fff;padding:10px;border-radius:8px;font-size:0.85em;font-weight:700;text-decoration:none;text-align:center;">🏌️ プロからゴルフを学ぶ（スポーツ家庭教師ファースト）</a>
+        <img border="0" width="1" height="1" src="https://www17.a8.net/0.gif?a8mat=4AVCO8+8PRLZE+4WGS+BWVTE" alt="">
+    </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ===== データ管理 =====
+const STORE_KEY = 'golf_rounds_v1';
+const PAR_DEFAULT = [4,3,4,5,4,3,4,5,4, 4,3,4,5,4,3,5,4,4]; // 標準的なパー配列
+
+function getRounds() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+    catch(e) { return []; }
+}
+function saveRounds(rounds) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(rounds)); }
+    catch(e) { alert('保存容量が不足しています。古いデータを削除してください。'); }
+}
+
+// ===== ホール入力 =====
+function buildHoleInputs() {
+    const outEl = document.getElementById('holes-out');
+    const inEl  = document.getElementById('holes-in');
+    outEl.innerHTML = '';
+    inEl.innerHTML  = '';
+    for (let h = 1; h <= 18; h++) {
+        const par = PAR_DEFAULT[h-1];
+        const el  = document.createElement('div');
+        el.className = 'hole-box';
+        el.innerHTML = `<div class="hole-num">${h}</div><div class="hole-par">P${par}</div>
+            <input class="hole-input" type="number" id="h${h}" min="1" max="15" placeholder="-"
+                   oninput="colorHole(this,${par});updateTotals()">`;
+        (h <= 9 ? outEl : inEl).appendChild(el);
+    }
+    updateTotals();
+}
+
+function colorHole(inp, par) {
+    const v = parseInt(inp.value);
+    inp.className = 'hole-input';
+    if (!v) return;
+    if (v <= par - 2) inp.classList.add('eagle');
+    else if (v === par - 1) inp.classList.add('birdie');
+    else if (v === par) inp.classList.add('par-score');
+    else if (v === par + 1) inp.classList.add('bogey');
+    else if (v === par + 2) inp.classList.add('double');
+    else inp.classList.add('triple');
+}
+
+function updateTotals() {
+    let out = 0, inn = 0, outPar = 0, inPar = 0;
+    for (let h = 1; h <= 9; h++) {
+        const v = parseInt(document.getElementById('h'+h)?.value || 0); if (v) out += v;
+        outPar += PAR_DEFAULT[h-1];
+    }
+    for (let h = 10; h <= 18; h++) {
+        const v = parseInt(document.getElementById('h'+h)?.value || 0); if (v) inn += v;
+        inPar += PAR_DEFAULT[h-1];
+    }
+    const total = out + inn;
+    const totalPar = outPar + inPar;
+    document.getElementById('hole-totals').innerHTML = `
+        <div><div style="font-size:0.7em;color:#64748b;">OUT</div><div>${out||'-'}<span style="font-size:0.7em;color:#94a3b8;"> / P${outPar}</span></div></div>
+        <div><div style="font-size:0.7em;color:#64748b;">IN</div><div>${inn||'-'}<span style="font-size:0.7em;color:#94a3b8;"> / P${inPar}</span></div></div>
+        <div><div style="font-size:0.7em;color:#64748b;">TOTAL</div><div style="color:#166534;">${total||'-'}<span style="font-size:0.7em;color:#94a3b8;"> / P${totalPar}</span></div></div>`;
+}
+
+function toggleMode() {
+    const simple = document.getElementById('simple-mode').checked;
+    document.getElementById('hole-inputs-wrap').style.display = simple ? 'none' : 'block';
+    document.getElementById('simple-input-wrap').style.display = simple ? 'block' : 'none';
+}
+
+// ===== 記録 =====
+function saveRound() {
+    const date    = document.getElementById('inp-date').value;
+    const course  = document.getElementById('inp-course').value.trim();
+    const type    = document.getElementById('inp-type').value;
+    const weather = document.getElementById('inp-weather').value;
+    const memo    = document.getElementById('inp-memo').value.trim();
+    const partner = document.getElementById('inp-partner').value.trim();
+    const simple  = document.getElementById('simple-mode').checked;
+
+    if (!date || !course) { alert('日付とコース名を入力してください。'); return; }
+
+    let holes = [];
+    let score = 0;
+
+    if (simple) {
+        score = parseInt(document.getElementById('inp-simple-score').value);
+        if (!score || score < 40 || score > 200) { alert('スコアを正しく入力してください（40〜200）。'); return; }
+        holes = [];
+    } else {
+        for (let h = 1; h <= 18; h++) {
+            const v = parseInt(document.getElementById('h'+h)?.value || 0);
+            holes.push(v || 0);
+        }
+        score = holes.reduce((a,b) => a+b, 0);
+        const filled = holes.filter(v => v > 0).length;
+        if (type === '18H' && filled < 9) { if (!confirm(`${filled}ホールしか入力されていません。このまま記録しますか？`)) return; }
+        if (score === 0) { alert('スコアを入力してください。'); return; }
+    }
+
+    const round = { id: Date.now(), date, course, type, score, holes, weather, memo, partner };
+    const rounds = getRounds();
+    rounds.push(round);
+    saveRounds(rounds);
+
+    // リセット
+    document.getElementById('inp-course').value = '';
+    document.getElementById('inp-memo').value   = '';
+    document.getElementById('inp-partner').value= '';
+    if (!simple) {
+        for (let h = 1; h <= 18; h++) {
+            const el = document.getElementById('h'+h);
+            if (el) { el.value = ''; el.className = 'hole-input'; }
+        }
+        updateTotals();
+    }
+    alert(`✅ 記録しました！\n${date} ${course} スコア：${score}`);
+    renderQuickStats();
+}
+
+// ===== クイック統計 =====
+function renderQuickStats() {
+    const rounds = getRounds().filter(r => r.type === '18H');
+    const el = document.getElementById('quick-stats');
+    if (rounds.length === 0) {
+        el.innerHTML = `<div class="stat-box" style="grid-column:1/-1;"><div class="stat-lbl">ラウンドを記録するとここに統計が表示されます</div></div>`;
+        return;
+    }
+    const scores = rounds.map(r => r.score);
+    const avg = Math.round(scores.reduce((a,b)=>a+b,0) / scores.length);
+    const best = Math.min(...scores);
+    el.innerHTML = `
+        <div class="stat-box"><div class="stat-val">${rounds.length}</div><div class="stat-lbl">ラウンド数</div></div>
+        <div class="stat-box"><div class="stat-val">${avg}</div><div class="stat-lbl">平均スコア</div></div>
+        <div class="stat-box"><div class="stat-val">${best}</div><div class="stat-lbl">ベストスコア</div></div>`;
+}
+
+// ===== 履歴 =====
+function renderHistory() {
+    const filterType = document.getElementById('filter-type').value;
+    const sortOrder  = document.getElementById('sort-order').value;
+    let rounds = getRounds();
+    if (filterType !== 'all') rounds = rounds.filter(r => r.type === filterType);
+    rounds = rounds.sort((a,b) => {
+        if (sortOrder === 'date-desc') return b.date.localeCompare(a.date);
+        if (sortOrder === 'date-asc')  return a.date.localeCompare(b.date);
+        if (sortOrder === 'score-asc') return a.score - b.score;
+        return b.score - a.score;
+    });
+    const list  = document.getElementById('history-list');
+    const empty = document.getElementById('history-empty');
+    if (rounds.length === 0) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    const allScores = getRounds().filter(r=>r.type==='18H').map(r=>r.score);
+    const avg18 = allScores.length ? Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length) : 0;
+    list.innerHTML = rounds.map(r => {
+        const diff = r.score - 72;
+        const diffStr = diff >= 0 ? '+'+diff : ''+diff;
+        let pill = '';
+        if (r.type === '18H') {
+            if (r.score < avg18) pill = `<span class="score-pill pill-good">自己平均以下</span>`;
+            else if (r.score <= avg18 + 3) pill = `<span class="score-pill pill-normal">平均前後</span>`;
+            else pill = `<span class="score-pill pill-bad">平均超え</span>`;
+        }
+        return `<div class="round-item">
+            <div class="round-header">
+                <div>
+                    <div class="round-score">${r.score} <span style="font-size:0.6em;color:#64748b;">(${diffStr})</span></div>
+                    <div class="round-date">📅 ${r.date} | ${r.type} | ${r.weather}</div>
+                </div>
+                <button class="btn-danger" onclick="deleteRound(${r.id})">削除</button>
+            </div>
+            <div class="round-meta">📍 ${r.course} ${pill}</div>
+            ${r.partner ? `<div class="round-meta">👥 ${r.partner}</div>` : ''}
+            ${r.memo ? `<div class="round-meta" style="margin-top:4px;">📝 ${r.memo}</div>` : ''}
+        </div>`;
+    }).join('');
+}
+
+function deleteRound(id) {
+    if (!confirm('このラウンドを削除しますか？')) return;
+    saveRounds(getRounds().filter(r => r.id !== id));
+    renderHistory();
+    renderQuickStats();
+}
+
+// ===== 分析 =====
+function renderAnalysis() {
+    const all = getRounds();
+    const rounds18 = all.filter(r => r.type === '18H');
+
+    if (all.length < 2) {
+        document.getElementById('analysis-empty').style.display = 'block';
+        return;
+    }
+
+    // ハンデキャップ
+    if (rounds18.length > 0) {
+        const scores = rounds18.map(r=>r.score).sort((a,b)=>a-b);
+        const best = scores.slice(0, Math.max(1, Math.ceil(scores.length * 0.4)));
+        const avgBest = best.reduce((a,b)=>a+b,0)/best.length;
+        const hcp = Math.round((avgBest - 72) * 0.96 * 10) / 10;
+        document.getElementById('hcp-val').textContent = Math.max(0, hcp).toFixed(1);
+        document.getElementById('hcp-desc').textContent = `直近${rounds18.length}ラウンドのベスト${best.length}スコアから算出`;
+    }
+
+    // グラフ
+    const chartRounds = (rounds18.length >= 3 ? rounds18 : all).slice(-20);
+    const maxScore = Math.max(...chartRounds.map(r=>r.score));
+    const minScore = Math.min(...chartRounds.map(r=>r.score));
+    const range = Math.max(maxScore - minScore, 10);
+    const chartEl = document.getElementById('score-chart');
+    chartEl.innerHTML = chartRounds.map(r => {
+        const h = Math.round(((maxScore - r.score) / range) * 100) + 20;
+        const color = r.score <= 72 ? '#16a34a' : r.score <= 81 ? '#eab308' : '#ef4444';
+        const d = r.date.slice(5);
+        return `<div class="bar-col">
+            <div class="bar" style="height:${h}px;background:${color};" title="${r.date} ${r.score}打"></div>
+            <div class="bar-val">${r.score}</div>
+            <div class="bar-date">${d}</div>
+        </div>`;
+    }).join('');
+
+    // 詳細統計
+    const scores = all.map(r=>r.score);
+    const avg = (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1);
+    const best = Math.min(...scores);
+    const worst = Math.max(...scores);
+    const recent5 = all.slice(-5);
+    const trend = recent5.length >= 2 ? (recent5[recent5.length-1].score - recent5[0].score) : 0;
+    document.getElementById('detail-stats').innerHTML = `
+        <div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">
+            <span style="color:#64748b;">総ラウンド数</span><span style="font-weight:700;">${all.length}ラウンド</span></div>
+        <div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">
+            <span style="color:#64748b;">平均スコア</span><span style="font-weight:700;color:#166534;">${avg}打</span></div>
+        <div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">
+            <span style="color:#64748b;">ベストスコア</span><span style="font-weight:700;color:#16a34a;">${best}打</span></div>
+        <div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">
+            <span style="color:#64748b;">ワーストスコア</span><span style="font-weight:700;color:#dc2626;">${worst}打</span></div>
+        <div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.85em;">
+            <span style="color:#64748b;">直近5ラウンドのトレンド</span>
+            <span style="font-weight:700;color:${trend<0?'#16a34a':trend>0?'#dc2626':'#64748b'};">${trend<0?'▼改善中':trend>0?'▲要注意':'→安定'} (${trend>0?'+':''}${trend}打)</span></div>`;
+
+    // ホール別分析
+    const withHoles = rounds18.filter(r => r.holes && r.holes.some(v=>v>0));
+    const holeCard = document.getElementById('hole-analysis-card');
+    const holeEl = document.getElementById('hole-analysis');
+    if (withHoles.length === 0) { holeCard.style.display = 'none'; return; }
+    holeCard.style.display = 'block';
+    const holeAvg = PAR_DEFAULT.map((par,i) => {
+        const vals = withHoles.map(r=>r.holes[i]).filter(v=>v>0);
+        if (!vals.length) return null;
+        return { par, avg: vals.reduce((a,b)=>a+b,0)/vals.length };
+    });
+    holeEl.innerHTML = `<div style="display:grid;grid-template-columns:repeat(9,1fr);gap:3px;text-align:center;font-size:0.72em;">
+        ${holeAvg.map((h,i) => {
+            if (!h) return `<div style="padding:4px;color:#94a3b8;">${i+1}<br>-</div>`;
+            const diff = (h.avg - h.par).toFixed(1);
+            const bg = diff <= 0 ? '#bbf7d0' : diff <= 1 ? '#fed7aa' : '#fecaca';
+            return `<div style="padding:4px;background:${bg};border-radius:4px;">${i+1}<br>${h.avg.toFixed(1)}<br><span style="color:#64748b;">${diff>0?'+':''}${diff}</span></div>`;
+        }).join('')}
+    </div><p style="font-size:0.7em;color:#94a3b8;margin-top:6px;">緑=パー以下 オレンジ=ボギー前後 赤=苦手ホール</p>`;
+}
+
+// ===== スコア別アドバイス =====
+function renderScoreAdvice() {
+    const rounds = getRounds().filter(r=>r.type==='18H');
+    const el = document.getElementById('score-advice');
+    if (!rounds.length) { el.innerHTML = '<p style="color:#94a3b8;font-size:0.82em;">18Hのラウンドを記録するとアドバイスが表示されます。</p>'; return; }
+    const avg = rounds.reduce((a,b)=>a+b.score,0)/rounds.length;
+    let advice = '';
+    if (avg < 80) advice = `<p style="font-size:0.85em;color:#166534;font-weight:700;">🏆 スクラッチ〜9ハンデ相当（上級者）</p><p style="font-size:0.82em;color:#475569;">ショートゲームの精度をさらに高め、コースマネジメントの完成度を上げましょう。競技ゴルフへの挑戦もおすすめです。</p>`;
+    else if (avg < 90) advice = `<p style="font-size:0.85em;color:#166534;font-weight:700;">⭐ 9〜18ハンデ相当（中上級者）</p><p style="font-size:0.82em;color:#475569;">アプローチの精度が80台への鍵です。50〜80ydのウェッジショットを集中練習し、パット数を27以下を目指しましょう。</p>`;
+    else if (avg < 100) advice = `<p style="font-size:0.85em;color:#eab308;font-weight:700;">📈 18〜27ハンデ相当（中級者）</p><p style="font-size:0.82em;color:#475569;">OBと3パットを減らすだけで90台前半も狙えます。「確実に打てる番手」でのコースマネジメントを優先しましょう。</p>`;
+    else if (avg < 110) advice = `<p style="font-size:0.85em;color:#ea580c;font-weight:700;">🎯 27〜36ハンデ相当（初中級者）</p><p style="font-size:0.82em;color:#475569;">まずはOBゼロを目指しましょう。ティーショットはドライバーではなく確実なクラブを。アプローチの練習時間を増やすことが効果的です。</p>`;
+    else advice = `<p style="font-size:0.85em;color:#dc2626;font-weight:700;">🌱 36ハンデ以上（初級者）</p><p style="font-size:0.82em;color:#475569;">まず100打を切ることを目標に。グリーン周り（10yd以内）のアプローチとパッティングを徹底的に練習しましょう。ドライバーより短いクラブを正確に打てるように。</p>`;
+    el.innerHTML = `<div style="background:#f0fdf4;border-radius:8px;padding:12px;">${advice}</div>`;
+}
+
+// ===== タブ切替 =====
+function switchTab(name) {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('panel-'+name).classList.add('active');
+    if (name==='history') renderHistory();
+    if (name==='analysis') renderAnalysis();
+    if (name==='tips') renderScoreAdvice();
+}
+
+// ===== データ操作 =====
+function exportData() {
+    const rounds = getRounds();
+    if (!rounds.length) { alert('エクスポートするデータがありません。'); return; }
+    const header = 'ID,日付,コース,種別,スコア,天気,メモ,同伴者\n';
+    const rows = rounds.map(r => `${r.id},${r.date},"${r.course}",${r.type},${r.score},${r.weather},"${r.memo}","${r.partner}"`).join('\n');
+    const blob = new Blob(['﻿'+header+rows], {type:'text/csv;charset=utf-8;'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `golf_scores_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+}
+function clearAllData() {
+    if (!confirm('⚠️ 全データを削除します。この操作は取り消せません。\nCSVエクスポートでバックアップを取りましたか？')) return;
+    if (!confirm('本当に削除しますか？')) return;
+    localStorage.removeItem(STORE_KEY);
+    renderHistory();
+    renderQuickStats();
+    alert('削除しました。');
+}
+
+// ===== アフィリエイトトラッキング =====
+document.addEventListener('click', function(e) {
+    const el = e.target.closest('.js-track-affiliate');
+    if (!el) return;
+    if (typeof dataLayer !== 'undefined') {
+        dataLayer.push({event:'affiliate_click', affiliate_item: el.dataset.itemName, affiliate_platform: el.dataset.platform, affiliate_link_type: el.dataset.linkType});
+    }
+});
+
+// ===== 初期化 =====
+window.onerror = function(msg, src, line) {
+    try { console.error('[AppError]', msg, 'at', src+':'+line); } catch(e) {}
+    return false;
+};
+window.addEventListener('unhandledrejection', function(e) { console.error('[PromiseError]', e.reason); });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 今日の日付をデフォルト設定
+    document.getElementById('inp-date').value = new Date().toISOString().slice(0,10);
+    buildHoleInputs();
+    renderQuickStats();
+    // ローディング解除
+    var l = document.getElementById('page-loader');
+    if (l) { l.style.opacity='0'; l.style.transition='opacity 0.3s'; setTimeout(function(){l.remove();},350); }
+});
+</script>
+
+<!-- ローディング -->
+<div id="page-loader" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#f0fdf4;z-index:9999;display:flex;align-items:center;justify-content:center;">
+    <div style="width:40px;height:40px;border:4px solid #d1fae5;border-top-color:#16a34a;border-radius:50%;animation:spin-loader 0.8s linear infinite;"></div>
+</div>
+<style>@keyframes spin-loader{to{transform:rotate(360deg)}}</style>
+</body>
+</html>
