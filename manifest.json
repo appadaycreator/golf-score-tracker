@@ -4,7 +4,7 @@
   "description": "ゴルフスコアを無料で記録・管理・グラフ分析。ラウンドごとの成績・ベストスコア・ハンデキャップを自動計算。登録不要ですぐ使える。",
   "start_url": "/golf-score-tracker/",
   "display": "standalone",
-  "background_color": "#f8faf9",
+  "background_color": "#ffffff",
   "theme_color": "#7c3aed",
   "lang": "ja",
   "icons": [
