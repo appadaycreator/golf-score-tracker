@@ -844,7 +844,6 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div></div>
 <script>
 (function(){
-window.onerror=function(m,s,l){try{console.error('[GolfErr]',m,s?s+':'+l:'');}catch(e){}return false;};
 window.addEventListener('unhandledrejection',function(e){try{console.error('[GolfP]',e.reason);}catch(e){}});
 window.showToast=function(msg,type){var c=document.getElementById('toastContainer');if(!c)return;var t=document.createElement('div');t.className='toast toast-'+(type||'info');t.textContent=msg;c.appendChild(t);requestAnimationFrame(function(){t.classList.add('show');});setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove();},350);},3500);};
 window.showSuccess=function(m){showToast(m,'success');};
