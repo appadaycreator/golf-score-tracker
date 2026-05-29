@@ -179,10 +179,10 @@ button, .btn, .btn-primary, .option-btn, [role="button"] { min-height: 48px; min
     <h1>⛳ ゴルフスコア管理・分析</h1>
     <p>ラウンド記録 → 統計分析 → ハンデ計算を無料で一括管理</p>
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('record')">📝 記録</button>
-        <button class="tab" onclick="switchTab('history')">📋 履歴</button>
-        <button class="tab" onclick="switchTab('analysis')">📊 分析</button>
-        <button class="tab" onclick="switchTab('tips')">💡 上達</button>
+        <button class="tab active" onclick="switchTab('record',this)">📝 記録</button>
+        <button class="tab" onclick="switchTab('history',this)">📋 履歴</button>
+        <button class="tab" onclick="switchTab('analysis',this)">📊 分析</button>
+        <button class="tab" onclick="switchTab('tips',this)">💡 上達</button>
     </div>
 </div>
 
@@ -208,7 +208,7 @@ button, .btn, .btn-primary, .option-btn, [role="button"] { min-height: 48px; min
         <label>📅 ラウンド日</label>
         <input type="date" id="inp-date" required>
         <label>🏌️ コース名</label>
-        <input type="text" id="inp-course" placeholder="例：〇〇カントリークラブ" required maxlength="60" aria-label="例：〇〇カントリークラブ">
+        <input type="text" id="inp-course" placeholder="例：〇〇カントリークラブ" required maxlength="60" aria-label="例：〇〇カントリークラブ" list="course-list" autocomplete="off"><datalist id="course-list"></datalist>
         <label>🎯 コースタイプ</label>
         <select id="inp-type">
             <option value="18H">18ホール（通常）</option>
@@ -247,9 +247,15 @@ button, .btn, .btn-primary, .option-btn, [role="button"] { min-height: 48px; min
         </select>
         <label>📝 メモ（気づき・反省点など）</label>
         <textarea id="inp-memo" rows="2" placeholder="例：アプローチが安定した。3番ホールのバンカーで崩れた。" maxlength="300"></textarea>
+        <label>⛳ パット数（任意）</label>
+        <input type="number" id="inp-putts" min="18" max="72" placeholder="例：36" aria-label="パット数">
         <label>🏌️ 同伴者（任意）</label>
         <input type="text" id="inp-partner" placeholder="例：山田さん、佐藤さん" maxlength="60" aria-label="例：山田さん、佐藤さん">
         <button class="btn-primary" onclick="saveRound()" aria-label="💾 このラウンドを記録する">💾 このラウンドを記録する</button>
+        <div id="save-success-banner" style="display:none;margin-top:10px;background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:10px 14px;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.85em;font-weight:700;color:#166534;">✅ 記録しました！</span>
+            <button onclick="const t=document.querySelectorAll('.tab')[1];switchTab('history',t);" style="background:#166534;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:0.8em;font-weight:700;cursor:pointer;">履歴を見る →</button>
+        </div>
     </div>
 
     <!-- Amazon -->
@@ -287,7 +293,9 @@ button, .btn, .btn-primary, .option-btn, [role="button"] { min-height: 48px; min
     <div class="card" style="text-align:center;">
         <div class="card-title" style="justify-content:center;">📤 データ管理</div>
         <button onclick="exportData()" style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 20px;font-size:0.85em;font-weight:600;cursor:pointer;color:#166534;margin:4px;">⬇️ CSVエクスポート</button>
+        <label style="display:inline-block;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 20px;font-size:0.85em;font-weight:600;cursor:pointer;color:#0369a1;margin:4px;">⬆️ CSVインポート<input type="file" id="csv-import-input" accept=".csv" style="display:none;" onchange="importData(this)"></label>
         <button onclick="clearAllData()" style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:10px 20px;font-size:0.85em;font-weight:600;cursor:pointer;color:#dc2626;margin:4px;">🗑️ 全データ削除</button>
+        <p style="font-size:0.72em;color:#94a3b8;margin-top:6px;">※インポートは既存データへの追加になります</p>
     </div>
 </div>
 
@@ -313,6 +321,8 @@ button, .btn, .btn-primary, .option-btn, [role="button"] { min-height: 48px; min
         <div style="display:flex;gap:12px;margin-top:8px;font-size:0.72em;justify-content:center;">
             <span>🟢 パー以下</span><span>🟡 +1〜9</span><span>🔴 +10以上</span>
         </div>
+        <p style="font-size:0.68em;color:#94a3b8;text-align:center;margin-top:4px;">バーをタップするとラウンド詳細を表示</p>
+        <div id="chart-detail" style="display:none;margin-top:8px;"></div>
     </div>
     <!-- 詳細統計 -->
     <div class="card">
@@ -453,7 +463,8 @@ function saveRound() {
 
     if (simple) {
         score = parseInt(document.getElementById('inp-simple-score').value);
-        if (!score || score < 40 || score > 200) { alert('スコアを正しく入力してください（40〜200）。'); return; }
+        const minS = type === '9H' ? 27 : 40, maxS = type === '9H' ? 100 : 200;
+        if (!score || score < minS || score > maxS) { alert(`スコアを正しく入力してください（${minS}〜${maxS}）。`); return; }
         holes = [];
     } else {
         for (let h = 1; h <= 18; h++) {
@@ -466,15 +477,19 @@ function saveRound() {
         if (score === 0) { alert('スコアを入力してください。'); return; }
     }
 
-    const round = { id: Date.now(), date, course, type, score, holes, weather, memo, partner };
+    const putts = parseInt(document.getElementById('inp-putts')?.value || 0) || 0;
+    const round = { id: Date.now(), date, course, type, score, holes, putts, weather, memo, partner };
     const rounds = getRounds();
     rounds.push(round);
     saveRounds(rounds);
+    updateCourseDatalist();
 
     // リセット
     document.getElementById('inp-course').value = '';
     document.getElementById('inp-memo').value   = '';
     document.getElementById('inp-partner').value= '';
+    const puttsEl = document.getElementById('inp-putts');
+    if (puttsEl) puttsEl.value = '';
     if (!simple) {
         for (let h = 1; h <= 18; h++) {
             const el = document.getElementById('h'+h);
@@ -483,6 +498,13 @@ function saveRound() {
         updateTotals();
     }
     if (typeof showSuccess === 'function') showSuccess(`✅ 記録しました！ ${course} スコア：${score}`);
+    // 成功バナー表示（3秒後に非表示）
+    const banner = document.getElementById('save-success-banner');
+    if (banner) {
+        banner.style.display = 'flex';
+        clearTimeout(banner._hideTimer);
+        banner._hideTimer = setTimeout(() => { banner.style.display = 'none'; }, 5000);
+    }
     renderQuickStats();
     renderWeeklySummary();
 }
@@ -540,6 +562,7 @@ function renderHistory() {
                 <button class="btn-danger" onclick="deleteRound(${r.id})">削除</button>
             </div>
             <div class="round-meta">📍 ${r.course} ${pill}</div>
+            ${r.putts ? `<div class="round-meta">⛳ パット数：${r.putts}打</div>` : ''}
             ${r.partner ? `<div class="round-meta">👥 ${r.partner}</div>` : ''}
             ${r.memo ? `<div class="round-meta" style="margin-top:4px;">📝 ${r.memo}</div>` : ''}
         </div>`;
@@ -558,7 +581,7 @@ function renderAnalysis() {
     const all = getRounds();
     const rounds18 = all.filter(r => r.type === '18H');
 
-    if (all.length < 2) {
+    if (all.length < 3) {
         document.getElementById('analysis-empty').style.display = 'block';
         return;
     }
@@ -584,7 +607,7 @@ function renderAnalysis() {
         const color = r.score <= 72 ? '#16a34a' : r.score <= 81 ? '#eab308' : '#ef4444';
         const d = r.date.slice(5);
         return `<div class="bar-col">
-            <div class="bar" style="height:${h}px;background:${color};" title="${r.date} ${r.score}打"></div>
+            <div class="bar" style="height:${h}px;background:${color};" title="${r.date} ${r.score}打" onclick="showRoundDetail(${r.id})"></div>
             <div class="bar-val">${r.score}</div>
             <div class="bar-date">${d}</div>
         </div>`;
@@ -597,6 +620,8 @@ function renderAnalysis() {
     const worst = Math.max(...scores);
     const recent5 = all.slice(-5);
     const trend = recent5.length >= 2 ? (recent5[recent5.length-1].score - recent5[0].score) : 0;
+    const puttsArr = all.filter(r=>r.putts>0).map(r=>r.putts);
+    const avgPutts = puttsArr.length ? (puttsArr.reduce((a,b)=>a+b,0)/puttsArr.length).toFixed(1) : null;
     document.getElementById('detail-stats').innerHTML = `
         <div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">
             <span style="color:#64748b;">総ラウンド数</span><span style="font-weight:700;">${all.length}ラウンド</span></div>
@@ -606,6 +631,7 @@ function renderAnalysis() {
             <span style="color:#64748b;">ベストスコア</span><span style="font-weight:700;color:#16a34a;">${best}打</span></div>
         <div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">
             <span style="color:#64748b;">ワーストスコア</span><span style="font-weight:700;color:#dc2626;">${worst}打</span></div>
+        ${avgPutts ? `<div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;"><span style="color:#64748b;">平均パット数</span><span style="font-weight:700;color:#7c3aed;">⛳ ${avgPutts}打</span></div>` : ''}
         <div class="cost-row" style="display:flex;justify-content:space-between;padding:8px 0;font-size:0.85em;">
             <span style="color:#64748b;">直近5ラウンドのトレンド</span>
             <span style="font-weight:700;color:${trend<0?'#16a34a':trend>0?'#dc2626':'#64748b'};">${trend<0?'▼改善中':trend>0?'▲要注意':'→安定'} (${trend>0?'+':''}${trend}打)</span></div>`;
@@ -647,10 +673,10 @@ function renderScoreAdvice() {
 }
 
 // ===== タブ切替 =====
-function switchTab(name) {
+function switchTab(name, btn) {
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-    event.target.classList.add('active');
+    if (btn) btn.classList.add('active');
     document.getElementById('panel-'+name).classList.add('active');
     if (name==='history') renderHistory();
     if (name==='analysis') renderAnalysis();
@@ -661,8 +687,8 @@ function switchTab(name) {
 function exportData() {
     const rounds = getRounds();
     if (!rounds.length) { alert('エクスポートするデータがありません。'); return; }
-    const header = 'ID,日付,コース,種別,スコア,天気,メモ,同伴者\n';
-    const rows = rounds.map(r => `${r.id},${r.date},"${r.course}",${r.type},${r.score},${r.weather},"${r.memo}","${r.partner}"`).join('\n');
+    const header = 'ID,日付,コース,種別,スコア,パット数,天気,メモ,同伴者\n';
+    const rows = rounds.map(r => `${r.id},${r.date},"${r.course}",${r.type},${r.score},${r.putts||''},${r.weather},"${r.memo}","${r.partner}"`).join('\n');
     const blob = new Blob(['﻿'+header+rows], {type:'text/csv;charset=utf-8;'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -676,6 +702,75 @@ function clearAllData() {
     renderHistory();
     renderQuickStats();
     alert('削除しました。');
+}
+
+// ===== CSVインポート =====
+function importData(inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const lines = e.target.result.replace(/^﻿/, '').split('\n').filter(l => l.trim());
+            if (lines.length < 2) { alert('データが見つかりませんでした。'); return; }
+            const header = lines[0].split(',');
+            const imported = [];
+            for (let i = 1; i < lines.length; i++) {
+                const cols = lines[i].match(/(".*?"|[^,]+)(?=,|$)/g) || [];
+                const clean = (s) => (s || '').replace(/^"|"$/g, '').trim();
+                const id = parseInt(clean(cols[0])) || Date.now() + i;
+                const date = clean(cols[1]);
+                const course = clean(cols[2]);
+                const type = clean(cols[3]) || '18H';
+                const score = parseInt(clean(cols[4])) || 0;
+                if (!date || !course || !score) continue;
+                imported.push({ id, date, course, type, score, putts: parseInt(clean(cols[5])) || 0,
+                    weather: clean(cols[6]) || '晴れ', memo: clean(cols[7]) || '', partner: clean(cols[8]) || '', holes: [] });
+            }
+            if (!imported.length) { alert('インポートできるデータがありませんでした。'); return; }
+            const existing = getRounds();
+            const existIds = new Set(existing.map(r => r.id));
+            const newRounds = imported.filter(r => !existIds.has(r.id));
+            if (!newRounds.length) { alert('新しいデータはありませんでした（既にインポート済み）。'); return; }
+            saveRounds([...existing, ...newRounds].sort((a,b) => a.date.localeCompare(b.date)));
+            updateCourseDatalist();
+            renderHistory();
+            renderQuickStats();
+            if (typeof showSuccess === 'function') showSuccess(`✅ ${newRounds.length}件のラウンドをインポートしました！`);
+        } catch(err) {
+            alert('CSVの読み込みに失敗しました。形式を確認してください。');
+        }
+        inputEl.value = '';
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+// ===== コースオートコンプリート更新 =====
+function updateCourseDatalist() {
+    const dl = document.getElementById('course-list');
+    if (!dl) return;
+    const courses = [...new Set(getRounds().map(r => r.course).filter(Boolean))];
+    dl.innerHTML = courses.map(c => `<option value="${c.replace(/"/g,'&quot;')}">`).join('');
+}
+
+// ===== グラフバークリック詳細表示 =====
+function showRoundDetail(id) {
+    const r = getRounds().find(r => r.id === id);
+    if (!r) return;
+    const el = document.getElementById('chart-detail');
+    if (!el) return;
+    const diff = r.score - 72;
+    el.innerHTML = `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:12px;font-size:0.82em;">
+        <div style="font-weight:700;color:#166534;margin-bottom:4px;">📊 ${r.date} — ${r.course}</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <span>スコア：<strong>${r.score}</strong>（${diff>=0?'+':''}${diff}）</span>
+            <span>種別：${r.type}</span>
+            <span>天気：${r.weather}</span>
+            ${r.putts ? `<span>パット：${r.putts}</span>` : ''}
+        </div>
+        ${r.memo ? `<div style="margin-top:4px;color:#475569;">📝 ${r.memo}</div>` : ''}
+    </div>`;
+    el.style.display = 'block';
 }
 
 // ===== アフィリエイトトラッキング =====
@@ -748,9 +843,11 @@ window.onerror = function(msg, src, line) {
 window.addEventListener('unhandledrejection', function(e) { console.error('[PromiseError]', e.reason); });
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 今日の日付をデフォルト設定
-    document.getElementById('inp-date').value = new Date().toISOString().slice(0,10);
+    // 今日の日付をローカル時間でデフォルト設定（ISOStringはUTC基準のため日本時間と最大9時間ずれる）
+    const _now = new Date();
+    document.getElementById('inp-date').value = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`;
     buildHoleInputs();
+    updateCourseDatalist();
     renderQuickStats();
     renderWeeklySummary();
     // ローディング解除
@@ -764,7 +861,6 @@ document.addEventListener('DOMContentLoaded', function() {
     <div style="width:40px;height:40px;border:4px solid #d1fae5;border-top-color:#16a34a;border-radius:50%;animation:spin-loader 0.8s linear infinite;"></div>
 </div>
 <style>@keyframes spin-loader{to{transform:rotate(360deg)}}</style>
-<div id="ipl-gst" class="loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.92);z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none;"><div class="spinner" style="width:36px;height:36px;border:4px solid #e5e7eb;border-top-color:#10b981;border-radius:50%;animation:ipl-gst-spin 0.8s linear infinite;"></div><p class="loading-text" style="margin-top:10px;font-size:0.82rem;color:#9ca3af;">読み込み中...</p></div><style>@keyframes ipl-gst-spin{to{transform:rotate(360deg)}}</style><script>document.addEventListener("DOMContentLoaded",function(){try{var l=document.getElementById("ipl-gst");if(l){l.style.opacity="0";l.style.transition="opacity 0.3s";setTimeout(function(){try{if(l.parentNode)l.parentNode.removeChild(l);}catch(e){}},400);}}catch(e){}});</script>
 <div style="text-align:center;margin:14px auto;max-width:800px;padding:0 16px;">
 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8427583028015858" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -849,7 +945,6 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div></div>
 <script>
 (function(){
-window.addEventListener('unhandledrejection',function(e){try{console.error('[GolfP]',e.reason);}catch(e){}});
 window.showToast=function(msg,type){var c=document.getElementById('toastContainer');if(!c)return;var t=document.createElement('div');t.className='toast toast-'+(type||'info');t.textContent=msg;c.appendChild(t);requestAnimationFrame(function(){t.classList.add('show');});setTimeout(function(){t.classList.remove('show');setTimeout(function(){t.remove();},350);},3500);};
 window.showSuccess=function(m){showToast(m,'success');};
 window.showError=function(m){showToast(m,'error');};
