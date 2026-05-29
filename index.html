@@ -244,7 +244,7 @@ button, .btn, .btn-primary, .option-btn, [role="button"] { min-height: 48px; min
         <textarea id="inp-memo" rows="2" placeholder="例：アプローチが安定した。3番ホールのバンカーで崩れた。" maxlength="300"></textarea>
         <label>🏌️ 同伴者（任意）</label>
         <input type="text" id="inp-partner" placeholder="例：山田さん、佐藤さん" maxlength="60" aria-label="例：山田さん、佐藤さん">
-        <button class="btn-primary" onclick="saveRound()" aria-label="💾 このラウンドを記録する">💾 このラウンドを記録する</button aria-label="💾 このラウンドを記録する">
+        <button class="btn-primary" onclick="saveRound()" aria-label="💾 このラウンドを記録する">💾 このラウンドを記録する</button>
     </div>
 
     <!-- Amazon -->
@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div style="width:40px;height:40px;border:4px solid #d1fae5;border-top-color:#16a34a;border-radius:50%;animation:spin-loader 0.8s linear infinite;"></div>
 </div>
 <style>@keyframes spin-loader{to{transform:rotate(360deg)}}</style>
-<div id="ipl-gst" class="loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.92);z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none;"><div class="spinner" style="width:36px;height:36px;border:4px solid #e5e7eb;border-top-color:#7c3aed;border-radius:50%;animation:ipl-gst-spin 0.8s linear infinite;"></div><p class="loading-text" style="margin-top:10px;font-size:0.82rem;color:#9ca3af;">読み込み中...</p></div><style>@keyframes ipl-gst-spin{to{transform:rotate(360deg)}}</style><script>document.addEventListener("DOMContentLoaded",function(){try{var l=document.getElementById("ipl-gst");if(l){l.style.opacity="0";l.style.transition="opacity 0.3s";setTimeout(function(){try{if(l.parentNode)l.parentNode.removeChild(l);}catch(e){}},400);}}catch(e){}});</script>
+<div id="ipl-gst" class="loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.92);z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none;"><div class="spinner" style="width:36px;height:36px;border:4px solid #e5e7eb;border-top-color:#10b981;border-radius:50%;animation:ipl-gst-spin 0.8s linear infinite;"></div><p class="loading-text" style="margin-top:10px;font-size:0.82rem;color:#9ca3af;">読み込み中...</p></div><style>@keyframes ipl-gst-spin{to{transform:rotate(360deg)}}</style><script>document.addEventListener("DOMContentLoaded",function(){try{var l=document.getElementById("ipl-gst");if(l){l.style.opacity="0";l.style.transition="opacity 0.3s";setTimeout(function(){try{if(l.parentNode)l.parentNode.removeChild(l);}catch(e){}},400);}}catch(e){}});</script>
 <div style="text-align:center;margin:14px auto;max-width:800px;padding:0 16px;">
 <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8427583028015858" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -837,7 +837,7 @@ document.addEventListener('DOMContentLoaded', function() {
 .toast-success{background:#16a34a;}.toast-error{background:#dc2626;}.toast-info{background:#7c3aed;}
 .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;z-index:9998;opacity:0;pointer-events:none;transition:opacity 0.2s;}
 .loading-overlay.active{opacity:1;pointer-events:all;}
-.loading-spinner{width:40px;height:40px;border:3px solid #e5e7eb;border-top-color:#7c3aed;border-radius:50%;animation:spin 0.7s linear infinite;}
+.loading-spinner{width:40px;height:40px;border:3px solid #e5e7eb;border-top-color:#10b981;border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 <div class="toast-container" id="toastContainer"></div>
@@ -907,8 +907,8 @@ window.hideLoading=function(){var el=document.getElementById('loadingOverlay');i
   </div>
 </div>
     <!-- rakuten-affiliate-block -->
-    <div class="card p-4 mb-4 text-center" style="border:1px solid #BF0000;background:#fff9f9;">
-      <p class="text-sm text-gray-600 mb-2">🛒 関連商品を楽天市場で探す</p>
+    <div class="card" style="border:1px solid #BF0000;background:#fff9f9;padding:16px;margin-bottom:16px;text-align:center;">
+      <p style="font-size:0.85rem;color:#4b5563;margin-bottom:8px;">🛒 関連商品を楽天市場で探す</p>
       <a href="https://hb.afl.rakuten.co.jp/ichiba/541ad0d2.ce2bed12.541ad0d3.a1a2318c/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F%25E3%2582%25B4%25E3%2583%25AB%25E3%2583%2595%2520%25E3%2582%25B0%25E3%2583%2583%25E3%2582%25BA%2F&link_type=text" target="_blank" rel="nofollow sponsored noopener"
          style="display:inline-block;background:#BF0000;color:white;padding:10px 24px;border-radius:8px;font-weight:bold;font-size:14px;text-decoration:none;">
         楽天市場で「ゴルフ グッズ」を検索 →
